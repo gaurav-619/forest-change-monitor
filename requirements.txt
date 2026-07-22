@@ -1,0 +1,23 @@
+# Requirements for Streamlit Community Cloud deployment.
+# Pin ranges to stay compatible while allowing security patches.
+
+# Core geospatial
+geopandas>=0.14,<2.0
+rasterio>=1.3,<2.0
+shapely>=2.0,<3.0
+numpy>=1.26,<3.0
+pyproj>=3.6
+
+# Data
+pandas>=2.0,<4.0
+pyyaml>=6.0,<7.0
+
+# Visualisation
+matplotlib>=3.8,<4.0
+
+# App
+streamlit>=1.35
+
+# NOT included (not needed for the V1 app):
+# earthengine-api  — Phase 2, requires GEE authentication
+# folium / streamlit-folium — reserved for Phase 2 interactive maps

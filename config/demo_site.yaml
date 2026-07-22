@@ -1,52 +1,66 @@
 # ============================================================
-# forest-change-monitor - site configuration
+# forest-change-monitor — site configuration
 # ------------------------------------------------------------
-# This file describes WHAT to analyze (which place, which two
-# time windows) and WITH WHAT SETTINGS (cloud filtering,
-# thresholds). Nothing here is code - change these values to
-# point the same pipeline at a different place or period.
-#
-# NOTE: site selection happens in Phase 1. Values marked TBD
-# below are placeholders.
+# Describes WHAT to analyse (which place, which time windows)
+# and WITH WHAT SETTINGS.  Nothing here is executable code —
+# change these values to point the same pipeline at a different
+# place or period.
 # ============================================================
 
 site:
-  name: demo_site                        # short slug, used in output filenames
-  aoi_path: data/aoi/demo_site.geojson    # project boundary (Area Of Interest)
+  name: prey_lang_demo
+  description: >
+    Illustrative ~896 ha AOI within Prey Lang Wildlife Sanctuary, Cambodia.
+    NOT a surveyed project boundary.  Chosen as a well-documented land-cover
+    change hotspot for educational and portfolio purposes.
+  aoi_path: data/aoi/demo_site.geojson
+  reference_point: "13.174389 N, 105.619171 E"
 
-# Two time windows we compare. Ideally the same season in two
-# different years (e.g. both "dry season") so we aren't confusing
-# normal seasonal greening/browning with real change.
+# The two time windows compared.  Matching the same season in both years
+# (Jan–Feb dry season) reduces false signals from normal seasonal variation.
 periods:
   before:
-    start: "TBD"   # e.g. 2022-01-01 - set in Phase 1
-    end: "TBD"
+    start: "2021-01-01"
+    end:   "2021-02-28"
   after:
-    start: "TBD"
-    end: "TBD"
+    start: "2023-01-01"
+    end:   "2023-02-28"
 
-sentinel2:
-  collection: COPERNICUS/S2_SR_HARMONIZED   # Sentinel-2 surface reflectance (confirm in Phase 2)
-  max_cloud_cover_pct: 20                   # skip whole scenes cloudier than this
-  cloud_mask_band: SCL                      # Sentinel-2 Scene Classification Layer
+# Version 1 data source — Hansen GFC annual tree-cover-loss raster
+lossyear_raster:
+  local_path:  data/raw/tree_cover_loss.tif
+  source:      "Hansen GFC v1.11 (University of Maryland / Global Forest Watch)"
+  collection:  "GFC-2023-v1.11"
+  encoding:    "pixel_value = year - 2000  (0 = no loss, 1 = 2001, ..., 23 = 2023)"
+  nodata:      255
+  resolution:  "~30 m (1 arc-second)"
+  license:     "CC BY 4.0"
+  citation:    "Hansen et al., Science 2013, doi:10.1126/science.1244693"
+  tile_url: >
+    https://storage.googleapis.com/earthenginepartners-hansen/GFC-2023-v1.11/
+    Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif
 
-forest_mask:
-  source: ESA/WorldCover/v200      # public global land-cover map, 10m resolution (confirm in Phase 2)
-  tree_cover_class_value: 10       # WorldCover code for "Tree cover"
+# Years to summarise in Version 1
+analysis_years: [2021, 2022, 2023]
 
-thresholds:
-  min_initial_ndvi: 0.4      # pixel must already look like healthy vegetation
-  loss_ndvi_delta: -0.2      # flag pixels whose NDVI dropped by more than this
-  # These starting values are illustrative, not validated - we will
-  # sanity-check them against real data in Phase 2/3. This file, not
-  # the code, is where you'd adjust them.
+# Projected CRS for accurate area calculation (m²)
+projected_crs:
+  epsg: 32648
+  name: "WGS 84 / UTM zone 48N"
+  note: "Correct for Prey Lang (~105.6 °E).  Used for AOI area only, not for raster ops."
 
-export:
-  scale_meters: 10   # Sentinel-2 native resolution for the bands we use
-  crs: null          # TBD in Phase 1 - the correct *local UTM zone* for
-                     # our demo site, not Web Mercator, so hectare math
-                     # is accurate (more on this in Phase 1).
-
+# Output configuration
 output:
   dir: outputs/
-  formats: [geotiff, png, csv, json, markdown]
+  formats:
+    - csv
+    - json
+    - geotiff
+    - png
+
+# Phase 2 placeholder — Sentinel-2 / GEE settings (not used in Version 1)
+sentinel2:
+  collection: COPERNICUS/S2_SR_HARMONIZED
+  max_cloud_cover_pct: 20
+  cloud_mask_band: SCL
+  status: "Phase 2 — requires Google Earth Engine access"

@@ -1,0 +1,25 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "demo_site",
+        "description": "Illustrative ~896 ha AOI within Prey Lang Wildlife Sanctuary, Cambodia. This is NOT a surveyed project boundary and does not claim to match the footprint of any specific reported clearing event - it is a representative box within a well-documented deforestation hotspot, chosen for an educational/portfolio project. See docs/limitations.md.",
+        "reference_point": "13.174389 N, 105.619171 E (Wikipedia: Prey Lang Wildlife Sanctuary)"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [105.6053, 13.1609],
+            [105.6330, 13.1609],
+            [105.6330, 13.1879],
+            [105.6053, 13.1879],
+            [105.6053, 13.1609]
+          ]
+        ]
+      }
+    }
+  ]
+}
