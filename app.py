@@ -444,12 +444,15 @@ else:
         plt.close(fig_aoi)
 
     with loss_col:
-        fig_loss = _clipped_loss_map()
-        if fig_loss:
-            st.pyplot(fig_loss, use_container_width=True)
-            plt.close(fig_loss)
+        if LOSS_MAP_PNG.exists():
+            st.image(str(LOSS_MAP_PNG), use_container_width=True)
         else:
-            st.caption("Clipped loss raster not yet generated.")
+            fig_loss = _clipped_loss_map()
+            if fig_loss:
+                st.pyplot(fig_loss, use_container_width=True)
+                plt.close(fig_loss)
+            else:
+                st.caption("Clipped loss raster not yet generated.")
 
     # --- Data table ---
     st.markdown("### Year-by-year breakdown")
