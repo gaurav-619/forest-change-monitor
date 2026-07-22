@@ -41,9 +41,9 @@ flowchart LR
 
 ## ⚙️ Analysis Workflow
 
-1. **Load Data**: Ingests a user-defined `.geojson` boundary polygon.
+1. **Load AOI**: Reads and validates a user-defined GeoJSON boundary polygon.
 2. **Align CRS**: Safely reprojects the vector boundary to match the `EPSG:4326` geographic coordinate system of the raw raster (protecting raster pixel integrity).
-3. **Mask & Clip**: Uses `rasterio` to cookie-cutter the Hansen Global Forest Change dataset down to the specific AOI polygon, assigning `NoData` to exterior pixels.
+3. **Mask & Clip**: Uses Rasterio to extract the Hansen Global Forest Change pixels that fall inside the AOI polygon, assigning NoData to pixels outside it.
 4. **Latitude-Adjusted Pixel Sizing**: Reads the raster affine transform and uses the AOI centroid latitude to estimate a latitude-adjusted pixel area in square metres, avoiding the incorrect assumption that every geographic pixel is exactly 30 m × 30 m.
 5. **Count & Convert**: Efficiently scans the clipped NumPy array to count pixels matching encoded loss years (e.g., 2021 = 21), and converts counts to hectares using the local pixel size.
 6. **Generate Outputs**: Writes a clean CSV of results, a QA metadata JSON file, and a visualization PNG map.
@@ -124,13 +124,24 @@ pytest tests/
 ### 3. Run Pipeline Locally (Optional)
 By default, the dashboard uses precomputed results stored in `outputs/`. To run the heavy pipeline yourself:
 ```bash
-# Download the raw Hansen raster tile
+# Download the raw Hansen raster tile (Mac/Linux)
 mkdir -p data/raw
 curl -L -o data/raw/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif "https://storage.googleapis.com/earthenginepartners-hansen/GFC-2023-v1.11/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif"
 
-# Remove precomputed outputs
+# Remove precomputed outputs (Mac/Linux)
 rm -rf outputs/*
+```
 
+```powershell
+# Download the raw Hansen raster tile (Windows PowerShell)
+New-Item -ItemType Directory -Force -Path data\raw
+Invoke-WebRequest -Uri "https://storage.googleapis.com/earthenginepartners-hansen/GFC-2023-v1.11/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif" -OutFile "data\raw\Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif"
+
+# Remove precomputed outputs (Windows PowerShell)
+Remove-Item -Path outputs\* -Recurse -Force
+```
+
+```bash
 # Run the pipeline
 python scripts/run_pipeline.py
 
@@ -156,5 +167,5 @@ This app is optimized for seamless deployment on Streamlit Community Cloud witho
 
 ## 🛣️ Next Improvements Roadmap
 - **Batch Processing**: Extend the pipeline to accept folders containing multiple `.geojson` AOIs.
-- **Formal Export**: Generate a templated, print-ready PDF PDF report of the QA JSON.
+- **Formal Export**: Generate a templated, print-ready PDF report containing the results and QA metadata.
 - **Workflow Automation**: Tie into Google Earth Engine (GEE) APIs to dynamically fetch composites for independent verification imagery.
