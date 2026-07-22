@@ -124,7 +124,7 @@ pytest tests/
 ### 3. Run Pipeline Locally (Optional)
 By default, the dashboard uses precomputed results stored in `outputs/`. To run the heavy pipeline yourself:
 ```bash
-# Download the raw 109MB Hansen raster tile
+# Download the raw Hansen raster tile
 mkdir -p data/raw
 curl -L -o data/raw/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif "https://storage.googleapis.com/earthenginepartners-hansen/GFC-2023-v1.11/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif"
 

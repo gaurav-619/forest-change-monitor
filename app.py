@@ -381,7 +381,7 @@ Below is the short version.
 
 <br><br>
 
-<strong>Step 1 — Download the Cambodia tile (~600 MB)</strong><br>
+<strong>Step 1 — Download the Cambodia tile</strong><br>
 Open this URL in your browser, or run:
 <pre>curl -L -o data/raw/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif \\
   "https://storage.googleapis.com/earthenginepartners-hansen/GFC-2023-v1.11/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif"</pre>

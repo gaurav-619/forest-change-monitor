@@ -1,19 +1,23 @@
-# data/
+# Data
 
-## Directory structure
+## Directory Structure
 
-```
+```text
 data/
-  aoi/
-    demo_site.geojson   — illustrative AOI polygon (WGS84, ~12,000 ha)
-  raw/
-    Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif — Hansen GFC lossyear raster (YOU must download this)
+├── aoi/
+│   └── demo_site.geojson
+└── raw/
+    └── Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif
 ```
 
-Note: The current AOI was selected from a regional Hansen loss-year scan to demonstrate non-zero pipeline output; it is not a representative sample or verified event boundary.
-
-`aoi/` is committed to Git — it is a small vector file.
-`raw/` is in `.gitignore` — the raster is ~600 MB and cannot be stored in Git.
+- `aoi/demo_site.geojson` is a small illustrative AOI polygon in WGS84 and is
+  committed to Git.
+- `raw/` is excluded through `.gitignore` because the source GeoTIFF is too
+  large to include in the repository. Users download it separately when they
+  want to run the full local pipeline.
+- The AOI was selected from a regional Hansen loss-year scan to demonstrate
+  non-zero pipeline output. It is not a representative sample, legally
+  surveyed project boundary, or verified event boundary.
 
 ---
 
@@ -23,11 +27,11 @@ This file is the **Hansen Global Forest Change v1.11 (2000–2023) annual
 tree-cover-loss ("lossyear") raster**, produced by the University of Maryland
 and distributed by Global Forest Watch.
 
-**License:** Creative Commons Attribution 4.0 (CC BY 4.0). Free to use with
-attribution. No registration or login required.
+The file is too large to include in this repository and is excluded through
+`.gitignore`. Download time and file size may vary by dataset version and
+compression. The dataset is distributed in GeoTIFF tiles and is available under CC BY 4.0. No registration or login required.
 
-**Tile to download:** The AOI (Prey Lang, ~13°N 105.6°E) falls in the tile
-covering 10°N–20°N, 100°E–110°E.
+**Tile to download:** The illustrative AOI lies in the Prey Lang region of Cambodia, within the 10°N–20°N, 100°E–110°E Hansen raster tile.
 
 ### Option A — Browser download (recommended for first-time users)
 
@@ -37,7 +41,7 @@ covering 10°N–20°N, 100°E–110°E.
    https://storage.googleapis.com/earthenginepartners-hansen/GFC-2023-v1.11/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif
    ```
 
-   The download will start automatically (~600 MB).
+   The download will start automatically.
 
 2. Move the file to the correct location:
 
@@ -64,13 +68,6 @@ Invoke-WebRequest `
   -OutFile "data\raw\Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif"
 ```
 
-### Verification
-
-```bash
-ls -lh data/raw/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif
-# Expected: approximately 580–620 MB
-```
-
 ---
 
 ## What is this raster?
@@ -81,7 +78,7 @@ ls -lh data/raw/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif
 | Variable | Annual tree-cover-loss year ("lossyear") |
 | Spatial resolution | ~30 m (1 arc-second) |
 | Temporal coverage | 2001–2023 |
-| Pixel encoding | `0` = no loss; `N` = loss in year `2000 + N` (e.g. `21` → 2021) |
+| Pixel encoding | `0` = no loss; `N` = loss in year `2000 + N` (1 = 2001 … 23 = 2023) |
 | Nodata value | `255` |
 | CRS | WGS84 (EPSG:4326) |
 | Tile coverage | 10°N–20°N, 100°E–110°E (all of Cambodia) |
@@ -93,12 +90,24 @@ ls -lh data/raw/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif
 
 ## What "tree-cover loss" means (and does not mean)
 
-The Hansen dataset detects a **stand-replacement disturbance** — a location where
-canopy cover dropped from ≥25% to below that threshold in a given year. This
-includes commercial logging, smallholder clearing, fire, drought die-off,
-plantation harvest, and mapping artefacts. A flagged pixel is a **screening
-signal requiring contextual review**, not a verified satellite-detected tree-cover loss record. See
-`docs/limitations.md`.
+The Hansen `lossyear` product records a satellite-derived **gross forest-cover
+loss event**, defined by the dataset as a stand-replacement disturbance: a
+change from a forest to a non-forest state at the Landsat-pixel scale.
+
+A flagged pixel indicates that the Hansen processing detected tree-cover loss
+at that location in the encoded year. It is useful as a spatial monitoring
+signal, but it does not by itself establish:
+
+- that the event was permanent deforestation;
+- the cause of loss, such as agriculture, logging, fire, storm damage, or
+  plantation harvesting;
+- whether tree cover later regrew;
+- whether the event was legal or illegal; or
+- a certification or carbon-accounting outcome.
+
+Additional imagery, land-use information, project records, and/or field
+evidence would be needed to interpret the cause and permanence of the
+detected loss.
 
 ---
 
