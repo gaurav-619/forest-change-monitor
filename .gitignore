@@ -35,9 +35,8 @@ Thumbs.db
 .idea/
 
 # --- Large / generated geospatial data: keep the repo small ---
-outputs/*
-!outputs/.gitkeep
 data/raw/*
 !data/raw/.gitkeep
 *.tif
 *.tiff
+outputs/*.tif

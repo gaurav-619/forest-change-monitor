@@ -1,0 +1,60 @@
+{
+  "metadata": {
+    "aoi_path": "data\\aoi\\demo_site.geojson",
+    "source_raster": "data\\raw\\Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif",
+    "years_analysed": [
+      2021,
+      2022,
+      2023
+    ]
+  },
+  "qa": {
+    "analysis_timestamp": "2026-07-22T15:32:17.642140+00:00",
+    "aoi_valid": true,
+    "aoi_area_ha": 11991.25,
+    "source_raster_exists": true,
+    "raster_crs": "EPSG:4326",
+    "raster_epsg": 4326,
+    "crs_recognized": true,
+    "source_resolution_x_deg": 0.00025,
+    "source_resolution_y_deg": 0.00025,
+    "pixel_area_m2": 749.3738,
+    "pixel_area_ha": 0.07493738,
+    "clipped_total_pixels": 160000,
+    "clipped_nodata_pixels": 0,
+    "clipped_valid_pixels": 160000,
+    "nodata_pct": 0.0,
+    "observed_lossyear_value_range": [
+      0,
+      23
+    ],
+    "expected_lossyear_value_range": [
+      0,
+      23
+    ],
+    "year_encoding_note": "pixel_value = calendar_year - 2000  (e.g. 21 \u2192 2021).  0 = no loss.  255 = nodata.",
+    "validations": {
+      "filename_valid": true,
+      "source_bounds_contain_aoi": true,
+      "full_raster_contains_21_22_23": true,
+      "clipped_contains_reported_values": true
+    }
+  },
+  "results": [
+    {
+      "year": 2021,
+      "loss_pixels": 26159,
+      "loss_area_ha": 1960.29
+    },
+    {
+      "year": 2022,
+      "loss_pixels": 5122,
+      "loss_area_ha": 383.83
+    },
+    {
+      "year": 2023,
+      "loss_pixels": 1543,
+      "loss_area_ha": 115.63
+    }
+  ]
+}

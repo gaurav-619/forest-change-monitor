@@ -5,8 +5,8 @@
       "type": "Feature",
       "properties": {
         "name": "demo_site",
-        "description": "Illustrative ~12,000 ha AOI within the Prey Lang region, Cambodia, centred on a documented 2021-2023 tree-cover-loss hotspot at ~105.875E, 13.075N. This is NOT a surveyed project boundary - it is a representative box chosen to demonstrate the forest-change pipeline with real loss data.",
-        "reference_point": "13.075 N, 105.875 E (Prey Lang region tree-cover-loss hotspot)"
+        "description": "Illustrative ~12,000 ha AOI within the Prey Lang region, Cambodia, centred on a documented 2021-2023 deforestation hotspot at ~105.875E, 13.075N. This is NOT a surveyed project boundary - it is a representative box chosen to demonstrate the forest-change pipeline with real loss data. See docs/limitations.md.",
+        "reference_point": "13.075 N, 105.875 E (Prey Lang region deforestation hotspot)"
       },
       "geometry": {
         "type": "Polygon",

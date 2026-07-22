@@ -99,7 +99,7 @@ def _pixel_area_m2(src: rasterio.DatasetReader, aoi_gdf: gpd.GeoDataFrame = None
     if src.crs.is_geographic:
         if aoi_gdf is not None:
             # Calculate at the centroid of the AOI for more accuracy
-            centroid = aoi_gdf.to_crs(epsg=4326).geometry.unary_union.centroid
+            centroid = aoi_gdf.to_crs(epsg=4326).geometry.union_all().centroid
             centre_lat = math.radians(centroid.y)
         else:
             # Fallback to raster center
@@ -110,6 +110,17 @@ def _pixel_area_m2(src: rasterio.DatasetReader, aoi_gdf: gpd.GeoDataFrame = None
         return width_m * height_m
     else:
         return res_x * res_y
+
+def _check_full_raster_values(src: rasterio.DatasetReader, required_values: set[int]) -> bool:
+    """Check if all required values are present in the full raster efficiently using blocks."""
+    found = set()
+    for _, window in src.block_windows(1):
+        data = src.read(1, window=window)
+        # Add values from this block to found set (only if they are in required_values)
+        found.update(set(np.unique(data)).intersection(required_values))
+        if found == required_values:
+            return True
+    return False
 
 
 def _align_aoi_to_raster_crs(
@@ -196,7 +207,7 @@ def _build_qa(
                 src.bounds.right >= aoi_gdf.total_bounds[2] and
                 src.bounds.top >= aoi_gdf.total_bounds[3]
             ),
-            "full_raster_contains_21_22_23": bool(src.statistics(1).max >= 23.0),
+            "full_raster_contains_21_22_23": bool(_check_full_raster_values(src, {21, 22, 23})),
             "clipped_contains_reported_values": bool(all(
                 int(np.sum(clipped == (y - _YEAR_OFFSET))) > 0 for y in years
             )),
