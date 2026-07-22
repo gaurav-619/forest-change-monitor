@@ -97,7 +97,7 @@ The Hansen dataset detects a **stand-replacement disturbance** — a location wh
 canopy cover dropped from ≥25% to below that threshold in a given year. This
 includes commercial logging, smallholder clearing, fire, drought die-off,
 plantation harvest, and mapping artefacts. A flagged pixel is a **screening
-signal requiring contextual review**, not a verified deforestation record. See
+signal requiring contextual review**, not a verified satellite-detected tree-cover loss record. See
 `docs/limitations.md`.
 
 ---
