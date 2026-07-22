@@ -4,13 +4,13 @@ PURPOSE
 -------
 An educational portfolio prototype for a Geodata Analyst role at Equitable
 Earth.  Shows satellite-mapped tree-cover-loss area within an illustrative
-~896 ha AOI near Prey Lang Wildlife Sanctuary, Cambodia, for years 2021–2023.
+~12,000 ha AOI near Prey Lang Wildlife Sanctuary, Cambodia, for years 2021–2023.
 
 HONESTY STATEMENT
 -----------------
 * The AOI is illustrative and is NOT a surveyed concession, project boundary,
   or precise footprint of any documented logging event.
-* "Tree-cover loss" ≠ deforestation.  Causes include logging, fire, drought,
+* "Tree-cover loss" ≠ satellite-mapped tree-cover loss.  Causes include logging, fire, drought,
   crop clearing, plantations, and mapping artefacts.
 * This app does NOT calculate biomass, carbon, CO2e, carbon credits,
   additionality, leakage, permanence, or certification outcomes.
@@ -56,7 +56,7 @@ st.set_page_config(
 # ---------------------------------------------------------------------------
 ROOT           = Path(__file__).parent
 AOI_PATH       = ROOT / "data" / "aoi" / "demo_site.geojson"
-LOSSYEAR_PATH  = ROOT / "data" / "raw" / "tree_cover_loss.tif"
+LOSSYEAR_PATH  = ROOT / "data" / "raw" / "Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif"
 OUTPUT_DIR     = ROOT / "outputs"
 CSV_PATH       = OUTPUT_DIR / "yearly_loss_summary.csv"
 JSON_PATH      = OUTPUT_DIR / "yearly_loss_summary.json"
@@ -233,7 +233,7 @@ def _aoi_map(aoi_gdf: gpd.GeoDataFrame) -> plt.Figure:
     ax.tick_params(colors="#95d5b2", labelsize=8)
     for spine in ax.spines.values():
         spine.set_edgecolor("#2d6a4f")
-    patch = mpatches.Patch(facecolor="#2d6a4f", edgecolor="#40916c", label="AOI (~896 ha)")
+    patch = mpatches.Patch(facecolor="#2d6a4f", edgecolor="#40916c", label="AOI (~12,000 ha)")
     ax.legend(handles=[patch], facecolor="#0f1f17", labelcolor="#95d5b2", fontsize=8)
     fig.tight_layout()
     return fig
@@ -305,7 +305,7 @@ with st.sidebar:
     st.markdown("**Limitations**")
     st.markdown(
         "- AOI is illustrative, not a surveyed boundary  \n"
-        "- Loss ≠ deforestation (fire, drought, crops, logging, etc.)  \n"
+        "- Loss ≠ satellite-mapped tree-cover loss (fire, drought, crops, logging, etc.)  \n"
         "- Pixel counts are a screening signal, not a validated area estimate  \n"
         "- No biomass, carbon, or CO₂e calculated  \n"
         "- Not an Equitable Earth product"
@@ -352,11 +352,11 @@ st.markdown("---")
 st.markdown("""
 <div class="warning-box">
 <strong>Scientific honesty notice</strong><br>
-The figures below are <em>satellite-mapped tree-cover-loss area</em> — a screening
-signal, not verified deforestation.  Causes of canopy-cover change include legal
-logging, fire, agriculture, drought, and mapping artefacts.  This app does
+The figures below are <em>satellite-mapped tree-cover-loss estimates</em>—a screening
+signal, not independently verified ground truth. Possible causes include fire, drought,
+crop conversion, logging, and mapping artefacts. This app does
 <strong>not</strong> calculate biomass, carbon, CO₂e, or certification outcomes.
-The AOI is illustrative and is not a surveyed project boundary.
+The AOI is illustrative and not a surveyed project boundary.
 </div>
 """, unsafe_allow_html=True)
 
@@ -374,7 +374,7 @@ if data_status == "no_data":
 The processing pipeline is ready, but the Hansen GFC lossyear raster has not
 been placed at the expected path:
 
-<code>data/raw/tree_cover_loss.tif</code>
+<code>data/raw/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif</code>
 
 See <a href="data/README.md">data/README.md</a> for full instructions.
 Below is the short version.
@@ -383,7 +383,7 @@ Below is the short version.
 
 <strong>Step 1 — Download the Cambodia tile (~600 MB)</strong><br>
 Open this URL in your browser, or run:
-<pre>curl -L -o data/raw/tree_cover_loss.tif \\
+<pre>curl -L -o data/raw/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif \\
   "https://storage.googleapis.com/earthenginepartners-hansen/GFC-2023-v1.11/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif"</pre>
 
 <strong>Step 2 — Re-run the app</strong><br>
@@ -526,7 +526,7 @@ if qa_data:
 with st.expander("Known limitations", expanded=False):
     st.markdown("""
 - **AOI is illustrative** — not a surveyed project, concession, or property boundary.
-- **Loss ≠ deforestation** — the Hansen product maps any canopy change: fire,
+- **Loss ≠ satellite-mapped tree-cover loss** — the Hansen product maps any canopy change: fire,
   drought, smallholder rotation, plantations, and selective logging all appear.
 - **Cause cannot be determined** from this processing alone.
 - **No biomass, carbon, or CO₂e** is calculated at any point.

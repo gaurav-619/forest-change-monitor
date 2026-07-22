@@ -5,17 +5,19 @@
 ```
 data/
   aoi/
-    demo_site.geojson   — illustrative AOI polygon (WGS84, ~896 ha)
+    demo_site.geojson   — illustrative AOI polygon (WGS84, ~12,000 ha)
   raw/
-    tree_cover_loss.tif — Hansen GFC lossyear raster (YOU must download this)
+    Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif — Hansen GFC lossyear raster (YOU must download this)
 ```
+
+Note: The current AOI was selected from a regional Hansen loss-year scan to demonstrate non-zero pipeline output; it is not a representative sample or verified event boundary.
 
 `aoi/` is committed to Git — it is a small vector file.
 `raw/` is in `.gitignore` — the raster is ~600 MB and cannot be stored in Git.
 
 ---
 
-## How to obtain `data/raw/tree_cover_loss.tif`
+## How to obtain `data/raw/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif`
 
 This file is the **Hansen Global Forest Change v1.11 (2000–2023) annual
 tree-cover-loss ("lossyear") raster**, produced by the University of Maryland
@@ -42,14 +44,14 @@ covering 10°N–20°N, 100°E–110°E.
    ```bash
    mkdir -p data/raw
    mv ~/Downloads/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif \
-      data/raw/tree_cover_loss.tif
+      data/raw/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif
    ```
 
 ### Option B — Command-line download
 
 ```bash
 mkdir -p data/raw
-curl -L -o data/raw/tree_cover_loss.tif \
+curl -L -o data/raw/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif \
   "https://storage.googleapis.com/earthenginepartners-hansen/GFC-2023-v1.11/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif"
 ```
 
@@ -59,13 +61,13 @@ On Windows (PowerShell):
 New-Item -ItemType Directory -Force -Path data\raw
 Invoke-WebRequest `
   -Uri "https://storage.googleapis.com/earthenginepartners-hansen/GFC-2023-v1.11/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif" `
-  -OutFile "data\raw\tree_cover_loss.tif"
+  -OutFile "data\raw\Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif"
 ```
 
 ### Verification
 
 ```bash
-ls -lh data/raw/tree_cover_loss.tif
+ls -lh data/raw/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif
 # Expected: approximately 580–620 MB
 ```
 

@@ -48,6 +48,8 @@ from pathlib import Path
 from typing import Sequence
 
 import geopandas as gpd
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -73,7 +75,7 @@ class RasterAOIError(ValueError):
 # Internal helpers
 # ---------------------------------------------------------------------------
 
-def _pixel_area_m2(src: rasterio.DatasetReader) -> float:
+def _pixel_area_m2(src: rasterio.DatasetReader, aoi_gdf: gpd.GeoDataFrame = None) -> float:
     """Return the area of one raster pixel in square metres.
 
     HOW IT WORKS
@@ -95,7 +97,14 @@ def _pixel_area_m2(src: rasterio.DatasetReader) -> float:
     res_y = abs(src.transform.e)  # pixel height in CRS units
 
     if src.crs.is_geographic:
-        centre_lat = math.radians((src.bounds.top + src.bounds.bottom) / 2)
+        if aoi_gdf is not None:
+            # Calculate at the centroid of the AOI for more accuracy
+            centroid = aoi_gdf.to_crs(epsg=4326).geometry.unary_union.centroid
+            centre_lat = math.radians(centroid.y)
+        else:
+            # Fallback to raster center
+            centre_lat = math.radians((src.bounds.top + src.bounds.bottom) / 2)
+            
         width_m  = res_x * 111_320 * math.cos(centre_lat)
         height_m = res_y * 110_574
         return width_m * height_m
@@ -143,6 +152,7 @@ def _build_qa(
     pixel_area_m2: float,
     lossyear_path: Path,
     utm_epsg: int,
+    years: Sequence[int],
 ) -> dict:
     """Build a quality-assurance metadata dictionary for this analysis run."""
     total_pixels  = int(clipped.size)
@@ -178,6 +188,19 @@ def _build_qa(
             "pixel_value = calendar_year - 2000  "
             "(e.g. 21 → 2021).  0 = no loss.  255 = nodata."
         ),
+        "validations": {
+            "filename_valid": bool("GFC-2023-v1.11_lossyear_20N_100E.tif" in lossyear_path.name),
+            "source_bounds_contain_aoi": bool(
+                src.bounds.left <= aoi_gdf.total_bounds[0] and
+                src.bounds.bottom <= aoi_gdf.total_bounds[1] and
+                src.bounds.right >= aoi_gdf.total_bounds[2] and
+                src.bounds.top >= aoi_gdf.total_bounds[3]
+            ),
+            "full_raster_contains_21_22_23": bool(src.statistics(1).max >= 23.0),
+            "clipped_contains_reported_values": bool(all(
+                int(np.sum(clipped == (y - _YEAR_OFFSET))) > 0 for y in years
+            )),
+        }
     }
 
 
@@ -276,7 +299,7 @@ def compute_annual_loss(
 
     with rasterio.open(lossyear_path) as src:
         aoi_aligned   = _align_aoi_to_raster_crs(aoi_gdf, src)
-        pixel_area_m2 = _pixel_area_m2(src)
+        pixel_area_m2 = _pixel_area_m2(src, aoi_aligned)
 
         log.info(
             "Raster: CRS=%s  res=(%.8f, %.8f)  size=%dx%d  pixel_area=%.2f m²",
@@ -346,7 +369,7 @@ def run_full_pipeline(
 
     with rasterio.open(lossyear_path) as src:
         aoi_aligned    = _align_aoi_to_raster_crs(aoi_gdf, src)
-        pixel_area_m2  = _pixel_area_m2(src)
+        pixel_area_m2  = _pixel_area_m2(src, aoi_aligned)
         shapes         = [geom.__geo_interface__ for geom in aoi_aligned.geometry]
         clipped_data, clipped_transform = rio_mask(
             src, shapes, crop=True, nodata=_NODATA_VALUE
@@ -354,7 +377,7 @@ def run_full_pipeline(
         clipped      = clipped_data[0]
         raster_crs   = src.crs
         src_profile  = src.profile.copy()
-        qa           = _build_qa(aoi_gdf, src, clipped, pixel_area_m2, lossyear_path, utm_epsg)
+        qa           = _build_qa(aoi_gdf, src, clipped, pixel_area_m2, lossyear_path, utm_epsg, years)
 
     # Annual summary
     records = []

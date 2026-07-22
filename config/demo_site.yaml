@@ -10,7 +10,7 @@
 site:
   name: prey_lang_demo
   description: >
-    Illustrative ~896 ha AOI within Prey Lang Wildlife Sanctuary, Cambodia.
+    Illustrative ~12,000 ha AOI within Prey Lang Wildlife Sanctuary, Cambodia.
     NOT a surveyed project boundary.  Chosen as a well-documented land-cover
     change hotspot for educational and portfolio purposes.
   aoi_path: data/aoi/demo_site.geojson
@@ -28,7 +28,7 @@ periods:
 
 # Version 1 data source — Hansen GFC annual tree-cover-loss raster
 lossyear_raster:
-  local_path:  data/raw/tree_cover_loss.tif
+  local_path:  data/raw/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif
   source:      "Hansen GFC v1.11 (University of Maryland / Global Forest Watch)"
   collection:  "GFC-2023-v1.11"
   encoding:    "pixel_value = year - 2000  (0 = no loss, 1 = 2001, ..., 23 = 2023)"

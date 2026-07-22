@@ -22,7 +22,7 @@ flowchart LR
 
     B["Validate geometry<br/>geometry.py"] --> C
 
-    C["Hansen GFC v1.11<br/>lossyear raster<br/>data/raw/tree_cover_loss.tif"] --> D
+    C["Hansen GFC v1.11<br/>lossyear raster<br/>data/raw/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif"] --> D
 
     D["Align CRS<br/>Clip to AOI<br/>process_loss.py"] --> E
 
@@ -82,7 +82,7 @@ pip install -e ".[dev]"
 The processing pipeline expects the Hansen GFC v1.11 lossyear raster at:
 
 ```
-data/raw/tree_cover_loss.tif
+data/raw/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif
 ```
 
 This file is ~600 MB and is not committed to Git. See [`data/README.md`](data/README.md)
@@ -92,7 +92,7 @@ Short version:
 
 ```bash
 mkdir -p data/raw
-curl -L -o data/raw/tree_cover_loss.tif \
+curl -L -o data/raw/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif \
   "https://storage.googleapis.com/earthenginepartners-hansen/GFC-2023-v1.11/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif"
 ```
 
@@ -107,7 +107,7 @@ from forest_change.process_loss import run_full_pipeline
 
 run_full_pipeline(
     aoi_path="data/aoi/demo_site.geojson",
-    lossyear_path="data/raw/tree_cover_loss.tif",
+    lossyear_path="data/raw/Hansen_GFC-2023-v1.11_lossyear_20N_100E.tif",
     output_dir="outputs/",
     years=(2021, 2022, 2023),
     utm_epsg=32648,
