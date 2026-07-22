@@ -47,14 +47,14 @@ flowchart LR
 4. **Latitude-Adjusted Pixel Sizing**: Reads the raster affine transform and uses the AOI centroid latitude to estimate a latitude-adjusted pixel area in square metres, avoiding the incorrect assumption that every geographic pixel is exactly 30 m × 30 m.
 5. **Count & Convert**: Efficiently scans the clipped NumPy array to count pixels matching encoded loss years (e.g., 2021 = 21), and converts counts to hectares using the local pixel size.
 6. **Generate Outputs**: Writes a clean CSV of results, a QA metadata JSON file, and a visualization PNG map.
-7. **Quality Assurance Validation**: Runs a validation script to explicitly check that the generated CSV numbers perfectly match the spatial output.
+7. **Quality Assurance Validation**: Independently recalculates pixel counts from the clipped raster and checks that exported CSV counts and hectare values match within a defined rounding tolerance.
 
 ## 🚀 What This Demonstrates
 
 As a **Geodata Analyst** portfolio piece, this repository highlights:
 - **Geospatial Workflow Execution**: Managing coordinate reference systems, AOI boundaries, raster masking, and clipping without modifying the original source raster.
-- **Satellite-Derived Raster Processing**: Handling large GeoTIFFs using memory-efficient block-window scanning (`rasterio`).
-- **Reproducible Metrics**: Avoiding hardcoded constants (like assuming pixels are exactly 30m) in favor of dynamic mathematical derivations.
+- **Satellite-Derived Raster Processing**: Reading, masking, and analysing GeoTIFF raster data with Rasterio and NumPy, while limiting the primary analysis to the clipped AOI.
+- **Reproducible Metrics**: Deriving pixel area from raster metadata and a latitude-adjusted calculation rather than assuming every pixel is exactly 30 m × 30 m.
 - **QA & Data Validation**: Building strict, automated cross-checks to ensure pipeline integrity.
 - **Scalable Pipeline Design**: Separating the heavy back-end processing layer (`process_loss.py`) from the front-end dashboard (`app.py`).
 
@@ -150,7 +150,7 @@ streamlit run app.py
 This app is optimized for seamless deployment on Streamlit Community Cloud without requiring the original Hansen GeoTIFF.
 1. Connect your GitHub repository to Streamlit Cloud.
 2. Select `app.py` as the main file.
-3. The app will automatically detect the absence of the raw raster, skip the heavy processing phase, and instantly load the beautiful dashboard using the precomputed `outputs/` directory. 
+3. The app will automatically detect the absence of the raw raster, skip the heavy processing phase, and load the dashboard using precomputed outputs from the `outputs/` directory. 
 
 ---
 
