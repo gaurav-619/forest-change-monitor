@@ -14,7 +14,7 @@ permanence, or any certification outcome.  "Tree-cover loss" in the Hansen
 dataset is defined as a stand-replacement disturbance (canopy closure drops
 from ≥25% to below that threshold).  Causes include logging, fire, drought,
 conversion, smallholder clearing, and plantations.  A pixel flagged here is a
-screening signal, not verified deforestation.
+screening signal, not verified satellite-detected tree-cover loss.
 
 GIS CONCEPTS USED
 -----------------

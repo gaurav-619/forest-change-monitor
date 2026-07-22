@@ -1,6 +1,10 @@
 # Forest Change Monitor
 
-A reproducible, automated spatial pipeline that processes satellite-derived tree-cover loss data inside a defined Area of Interest (AOI), executes strict QA checks, and presents precomputed results via a Streamlit dashboard. 
+A reproducible geospatial workflow for quantifying satellite-detected tree-cover loss inside a defined Area of Interest (AOI).
+
+The project processes Hansen Global Forest Change `lossyear` raster data, clips it to a GeoJSON boundary, calculates annual tree-cover-loss area in hectares, runs automated quality-assurance checks, and presents precomputed results in a Streamlit dashboard.
+
+> **Disclaimer:** This is a geospatial engineering demonstration. It reports satellite-detected tree-cover loss and does not independently confirm deforestation, estimate carbon stocks or CO₂e, or make a certification decision.
 
 ### 🌍 URLs
 - **Live App**: [Streamlit Community Cloud Link Here] - Interactive dashboard displaying the precomputed analysis outputs.
@@ -10,7 +14,17 @@ A reproducible, automated spatial pipeline that processes satellite-derived tree
 
 ## 🎯 Why This Matters
 
-In the geospatial and carbon monitoring (MRV) domain, establishing ground truth starts with rigorous, reproducible spatial processing. This project models the foundational **geospatial screening layer** used to ask: *Where did tree-cover change occur, what is the mathematically accurate area of that change, and in what year did it happen?* By automating data masking, precision area calculation, and strict QA cross-validation, this repository demonstrates a founder-ready approach to transparent environmental data engineering.
+Nature-based carbon and conservation projects need reliable spatial evidence to understand change within a defined project area. Raw satellite datasets are large and technically complex; decision-makers need transparent, repeatable, and reviewable outputs.
+
+This project demonstrates a foundational monitoring workflow:
+
+1. Define the area to analyse.
+2. Extract the relevant satellite-derived change data.
+3. Quantify annual tree-cover loss in hectares.
+4. Validate that exported metrics match the spatial analysis.
+5. Deliver results in a clear dashboard and reusable output files.
+
+It answers: **where did satellite-detected tree-cover loss occur within this boundary, in which year, and over how much area?**
 
 ## 🏗️ Architecture & Data Flow
 
@@ -29,24 +43,24 @@ flowchart LR
 
 1. **Load Data**: Ingests a user-defined `.geojson` boundary polygon.
 2. **Align CRS**: Safely reprojects the vector boundary to match the `EPSG:4326` geographic coordinate system of the raw raster (protecting raster pixel integrity).
-3. **Mask & Clip**: Uses `rasterio` to cookie-cutter the massive global dataset down to the specific AOI polygon, assigning `NoData` to exterior pixels.
-4. **Precision Pixel Sizing**: Extracts the AOI's centroid latitude and applies the Haversine trigonometric formula to the raster's affine transform to compute a highly accurate, latitude-adjusted pixel area in square meters.
+3. **Mask & Clip**: Uses `rasterio` to cookie-cutter the Hansen Global Forest Change dataset down to the specific AOI polygon, assigning `NoData` to exterior pixels.
+4. **Latitude-Adjusted Pixel Sizing**: Reads the raster affine transform and uses the AOI centroid latitude to estimate a latitude-adjusted pixel area in square metres, avoiding the incorrect assumption that every geographic pixel is exactly 30 m × 30 m.
 5. **Count & Convert**: Efficiently scans the clipped NumPy array to count pixels matching encoded loss years (e.g., 2021 = 21), and converts counts to hectares using the local pixel size.
 6. **Generate Outputs**: Writes a clean CSV of results, a QA metadata JSON file, and a visualization PNG map.
-7. **Strict QA Validation**: Runs a validation script to explicitly check that the generated CSV numbers perfectly match a fresh manual count of the physical `.tif` output.
+7. **Quality Assurance Validation**: Runs a validation script to explicitly check that the generated CSV numbers perfectly match the spatial output.
 
 ## 🚀 What This Demonstrates
 
 As a **Geodata Analyst** portfolio piece, this repository highlights:
-- **Geospatial Workflow Execution**: Managing CRS, boundaries, and spatial joins without modifying raw pixel data.
-- **Satellite-Derived Raster Processing**: Handling massive (109MB+) GeoTIFFs using memory-efficient block-window scanning (`rasterio`).
+- **Geospatial Workflow Execution**: Managing coordinate reference systems, AOI boundaries, raster masking, and clipping without modifying the original source raster.
+- **Satellite-Derived Raster Processing**: Handling large GeoTIFFs using memory-efficient block-window scanning (`rasterio`).
 - **Reproducible Metrics**: Avoiding hardcoded constants (like assuming pixels are exactly 30m) in favor of dynamic mathematical derivations.
 - **QA & Data Validation**: Building strict, automated cross-checks to ensure pipeline integrity.
 - **Scalable Pipeline Design**: Separating the heavy back-end processing layer (`process_loss.py`) from the front-end dashboard (`app.py`).
 
 ## 📊 Results Summary (Prey Lang AOI)
 
-The pipeline processed an illustrative ~12,000-hectare boundary in Cambodia and generated the following **satellite-mapped tree-cover loss estimates**:
+The pipeline processed an illustrative ~12,000-hectare boundary in Cambodia and generated the following **satellite-detected tree-cover loss estimates**:
 
 | Year | Loss Pixels | Computed Area (Hectares) |
 |---|---|---|
@@ -54,13 +68,20 @@ The pipeline processed an illustrative ~12,000-hectare boundary in Cambodia and 
 | **2022** | 5,122 | 383.83 ha |
 | **2023** | 1,543 | 115.63 ha |
 
-## ✅ Quality Assurance (QA) Status
+## ✅ Quality Assurance
 
-An automated validation suite (`validate.py`) strictly guards the integrity of the data. **Current Status: ALL PASSED**.
-- **Data-Lineage**: Confirms the pipeline ran against the official Hansen GFC v1.11 dataset.
-- **Spatial Coverage**: Confirms the provided AOI polygon sits entirely inside the source raster bounds.
-- **Full-Raster Check**: Scans the raw raster in memory-efficient blocks to guarantee the dataset physically contains data up to the year 2023.
-- **Strict CSV Cross-Check**: Manually re-opens the output raster and CSV, counting pixels line-by-line to guarantee the dashboard metrics perfectly match the generated spatial file.
+The pipeline includes automated checks designed to make the final outputs traceable and reproducible.
+
+**Current status: PASS**
+
+- **Dataset lineage:** Records the Hansen Global Forest Change dataset version used by the analysis.
+- **AOI validation:** Confirms that the GeoJSON contains a valid analysis boundary and that it falls within raster coverage.
+- **CRS handling:** Aligns the AOI to the raster coordinate reference system before clipping.
+- **Year-Encoding Check:** Explicitly verifies that the requested encoded loss-year values (21, 22, and 23) are present in the relevant analysed data.
+- **Independent CSV Cross-Check:** Re-opens the clipped output raster and independently recalculates pixel counts, confirming that the CSV and dashboard metrics match the generated spatial output.
+- **Area validation:** Confirms hectare values equal pixel count multiplied by the calculated pixel area, within a defined rounding tolerance.
+
+These checks validate the pipeline output; they do not independently verify the real-world cause of observed tree-cover loss.
 
 *For full details on the QA process and Methodology, see [docs/qa.md](docs/qa.md) and [docs/methodology.md](docs/methodology.md).*
 
@@ -126,7 +147,7 @@ streamlit run app.py
 
 ## ☁️ Streamlit Community Cloud Deployment
 
-This app is optimized for seamless deployment on Streamlit Community Cloud without requiring the massive raw GeoTIFF.
+This app is optimized for seamless deployment on Streamlit Community Cloud without requiring the original Hansen GeoTIFF.
 1. Connect your GitHub repository to Streamlit Cloud.
 2. Select `app.py` as the main file.
 3. The app will automatically detect the absence of the raw raster, skip the heavy processing phase, and instantly load the beautiful dashboard using the precomputed `outputs/` directory. 

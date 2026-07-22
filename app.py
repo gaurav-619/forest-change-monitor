@@ -353,7 +353,7 @@ st.markdown("""
 <div class="warning-box">
 <strong>Scientific honesty notice</strong><br>
 The figures below are <em>satellite-mapped tree-cover-loss estimates</em>—a screening
-signal, not independently verified ground truth. Possible causes include fire, drought,
+signal, not independently verified reference data. Possible causes include fire, drought,
 crop conversion, logging, and mapping artefacts. This app does
 <strong>not</strong> calculate biomass, carbon, CO₂e, or certification outcomes.
 The AOI is illustrative and not a surveyed project boundary.
