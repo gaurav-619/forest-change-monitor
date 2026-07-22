@@ -7,8 +7,8 @@ The project processes Hansen Global Forest Change `lossyear` raster data, clips 
 > **Disclaimer:** This is a geospatial engineering demonstration. It reports satellite-detected tree-cover loss and does not independently confirm deforestation, estimate carbon stocks or CO₂e, or make a certification decision.
 
 ### 🌍 URLs
-- **Live App**: [Streamlit Community Cloud Link Here] - Interactive dashboard displaying the precomputed analysis outputs.
-- **Repository**: [GitHub Link Here] - Source code, spatial methodologies, QA validations, and reproducibility instructions.
+- **Live App**: [https://gaurav-619-forest-change-monitor-app-j9buxp.streamlit.app/](https://gaurav-619-forest-change-monitor-app-j9buxp.streamlit.app/) - Interactive dashboard displaying the precomputed analysis outputs.
+- **Repository**: [https://github.com/gaurav-619/forest-change-monitor](https://github.com/gaurav-619/forest-change-monitor) - Source code, spatial methodologies, QA validations, and reproducibility instructions.
 
 ---
 
