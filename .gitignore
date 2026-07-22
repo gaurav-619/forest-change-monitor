@@ -1,0 +1,42 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+
+# --- Secrets & credentials: never commit these ---
+.env
+*credentials*.json
+*service-account*.json
+*-key.json
+.config/earthengine/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Testing ---
+.pytest_cache/
+.coverage
+htmlcov/
+
+# --- OS cruft ---
+.DS_Store
+Thumbs.db
+
+# --- IDE ---
+.vscode/
+.idea/
+
+# --- Large / generated geospatial data: keep the repo small ---
+outputs/*
+!outputs/.gitkeep
+data/raw/
+*.tif
+*.tiff

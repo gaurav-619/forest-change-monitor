@@ -1,0 +1,52 @@
+# ============================================================
+# forest-change-monitor - site configuration
+# ------------------------------------------------------------
+# This file describes WHAT to analyze (which place, which two
+# time windows) and WITH WHAT SETTINGS (cloud filtering,
+# thresholds). Nothing here is code - change these values to
+# point the same pipeline at a different place or period.
+#
+# NOTE: site selection happens in Phase 1. Values marked TBD
+# below are placeholders.
+# ============================================================
+
+site:
+  name: demo_site                        # short slug, used in output filenames
+  aoi_path: data/aoi/demo_site.geojson    # project boundary (Area Of Interest)
+
+# Two time windows we compare. Ideally the same season in two
+# different years (e.g. both "dry season") so we aren't confusing
+# normal seasonal greening/browning with real change.
+periods:
+  before:
+    start: "TBD"   # e.g. 2022-01-01 - set in Phase 1
+    end: "TBD"
+  after:
+    start: "TBD"
+    end: "TBD"
+
+sentinel2:
+  collection: COPERNICUS/S2_SR_HARMONIZED   # Sentinel-2 surface reflectance (confirm in Phase 2)
+  max_cloud_cover_pct: 20                   # skip whole scenes cloudier than this
+  cloud_mask_band: SCL                      # Sentinel-2 Scene Classification Layer
+
+forest_mask:
+  source: ESA/WorldCover/v200      # public global land-cover map, 10m resolution (confirm in Phase 2)
+  tree_cover_class_value: 10       # WorldCover code for "Tree cover"
+
+thresholds:
+  min_initial_ndvi: 0.4      # pixel must already look like healthy vegetation
+  loss_ndvi_delta: -0.2      # flag pixels whose NDVI dropped by more than this
+  # These starting values are illustrative, not validated - we will
+  # sanity-check them against real data in Phase 2/3. This file, not
+  # the code, is where you'd adjust them.
+
+export:
+  scale_meters: 10   # Sentinel-2 native resolution for the bands we use
+  crs: null          # TBD in Phase 1 - the correct *local UTM zone* for
+                     # our demo site, not Web Mercator, so hectare math
+                     # is accurate (more on this in Phase 1).
+
+output:
+  dir: outputs/
+  formats: [geotiff, png, csv, json, markdown]
